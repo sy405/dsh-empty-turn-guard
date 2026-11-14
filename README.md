@@ -1,5 +1,16 @@
 # dsh-empty-turn-guard
 
+> **This fork (v0.2.0)** improves the upstream defaults based on real-world testing:
+>
+> | Setting | Upstream | This fork | Why |
+> |---|---|---|---|
+> | `maxContinuations` | 2 | **10** | Long tasks often stall more than twice |
+> | `minReasoningChars` | 40 | **120** | Cuts false positives on short thoughts |
+> | `steerText` | long paragraph | **short + `[系统]` prefix** | Model obeys a terse directive better |
+>
+> Measured: a turn that previously burned all 6 steers and still ended empty
+> was recovered on the **first** steer with these defaults.
+
 兜住一类**空回合**：模型整轮只产出思考（reasoning），既没有正文、也没有调用任何工具，而 agent 循环把它当作正常完成收尾——界面上只有一个思考气泡，标记「已完成」，一个字没输出。
 
 插件监听 `agent/turn-stopping`，用**纯结构判断**认出这种轮次，然后往同一轮里 `steer` 一条提示，让循环再走一步。
@@ -37,7 +48,7 @@ DSH 看到「没有工具调用、也没有文本」，判定模型已经给出�
 ## 安装
 
 ```sh
-dsh plugin --profile <profile> add @nlflora/dsh-empty-turn-guard
+dsh plugin --profile <profile> add @sy405/dsh-empty-turn-guard
 ```
 
 本地开发：

@@ -73,7 +73,7 @@ test('过短文本不误判', () => {
 console.log('decideRecovery')
 
 test('空回合要救', () => {
-  const a = analyzeTurn([msg(1, [{ type: 'reasoning', text: '想'.repeat(100) }])], 1)
+  const a = analyzeTurn([msg(1, [{ type: 'reasoning', text: '想'.repeat(150) }])], 1)
   const d = decideRecovery(a)
   assert.equal(d.recover, true)
 })
@@ -94,26 +94,28 @@ test('思考太短不救', () => {
 })
 
 test('关掉开关就不救', () => {
-  const a = analyzeTurn([msg(1, [{ type: 'reasoning', text: '想'.repeat(100) }])], 1)
+  const a = analyzeTurn([msg(1, [{ type: 'reasoning', text: '想'.repeat(150) }])], 1)
   assert.equal(decideRecovery(a, { enabled: false }).recover, false)
 })
 
 test('输出额度耗尽会标记 capped', () => {
-  const a = analyzeTurn([msg(1, [{ type: 'reasoning', text: '想'.repeat(100) }], { outputTokens: 4096 })], 1)
+  const a = analyzeTurn([msg(1, [{ type: 'reasoning', text: '想'.repeat(150) }], { outputTokens: 4096 })], 1)
   const d = decideRecovery(a)
   assert.equal(d.recover, true)
   assert.equal(d.capped, true)
 })
 
 test('低用量不算 capped', () => {
-  const a = analyzeTurn([msg(1, [{ type: 'reasoning', text: '想'.repeat(100) }], { outputTokens: 300 })], 1)
+  const a = analyzeTurn([msg(1, [{ type: 'reasoning', text: '想'.repeat(150) }], { outputTokens: 300 })], 1)
   assert.equal(decideRecovery(a).capped, false)
 })
 
 test('默认值可被覆盖', () => {
-  const a = analyzeTurn([msg(1, [{ type: 'reasoning', text: '想'.repeat(100) }])], 1)
+  const a = analyzeTurn([msg(1, [{ type: 'reasoning', text: '想'.repeat(150) }])], 1)
   assert.equal(decideRecovery(a, { minReasoningChars: 1000 }).recover, false)
-  assert.equal(DEFAULTS.maxContinuations, 2)
+  assert.equal(DEFAULTS.maxContinuations, 10)
+  assert.equal(DEFAULTS.minReasoningChars, 120)
+  assert.ok(DEFAULTS.steerText.startsWith('[系统]'), 'steerText should start with [系统]')
 })
 
 console.log(`\n全部通过：${passed} 项`)

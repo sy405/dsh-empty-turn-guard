@@ -27,10 +27,10 @@ const PLUGIN_SOURCE = { kind: `plugin:${name}` }
 /** 默认配置。 */
 export const DEFAULTS = {
   enabled: true,
-  /** 每轮最多补救几次。 */
-  maxContinuations: 2,
+  /** 每轮最多补救几次（实测 20 次能救回长任务，默认 10 折中）。 */
+  maxContinuations: 10,
   /** 思考少于这么多字就不管（可能是模型真的选择不回答）。 */
-  minReasoningChars: 40,
+  minReasoningChars: 120,
   /** 是否检测重复退化。 */
   detectRepetition: true,
   /** 同一短语连续重复达到这个次数，判定为退化。 */
@@ -38,8 +38,8 @@ export const DEFAULTS = {
   /** 上下文窗口耗尽时的输出上限估算，用来判断是不是 max-tokens。 */
   assumedMaxOutputTokens: 4096,
   /** 常规补救提示。 */
-  steerText: '你刚才的思考陷入了重复，整轮没有产生任何输出。请立刻停止重复推导，'
-    + '直接给出结论，或者执行下一步动作（调用工具）。',
+  steerText: '[系统] 上一轮只有思考，正文和工具调用都是空的。'
+    + '现在必须输出可见内容：写正文，或调用工具。禁止只思考。',
   /** 疑似输出额度耗尽时的补救提示。 */
   steerTextCapped: '上一轮你的思考占满了输出额度，正文没来得及写。请压缩思考过程，'
     + '这一轮直接输出结果或执行下一步动作。',
